@@ -1,22 +1,36 @@
-const express = require("express");
-const { Poll } = require("./models");
-
+const express = require ('express');
 const app = express();
-app.use(express.json());
+//load env variable
+//shoukd go before, so it runs on db
+require("dotenv").config();
+const db = require("./db")
+const {Poll, Option, Vote} = require("./models")
+const port = process.env.PORT || 4000;
+const pollRouter = require("./routes/polls")
+const voteRouter = require("./routes/votes")
 
-app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
+// app.use(cors())
+
+
+app.use(express.json())
+app.use("/routes/polls", pollRouter);
+app.use("/routes/votes", voteRouter);
+
+
+
+app.get('/', (req, res) => {
+  res.send("main");
 });
 
-app.get("/polls", async (req, res) => {
-  try {
-    const polls = await Poll.findAll();
-    res.json(polls);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
+db.sync() 
+  .then(() => {
+    console.log('DB is synced with our app')
+    
+    app.listen(port, () => { 
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  })
+  .catch((er) => {
+    console.log('Failed to sync to the DB')
+    console.log('Error', er)
+  })

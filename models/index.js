@@ -1,18 +1,17 @@
-const db = require("./db");
-const Poll = require("./polls");
-const Option = require("./options");
-const Vote = require("./votes");
+//associations
 
-Poll.hasMany(Option, {
-  foreignKey: { name: "pollId", allowNull: false },
-  onDelete: "CASCADE",
-});
-Option.belongsTo(Poll, { foreignKey: "pollId" });
+const Poll = require('./Polls')
+const Option = require('./Options')
+const Vote = require('./Votes')
 
-Option.hasMany(Vote, {
-  foreignKey: { name: "optionId", allowNull: false },
-  onDelete: "CASCADE",
-});
-Vote.belongsTo(Option, { foreignKey: "optionId" });
+Poll.hasMany(Option)
+Option.belongsTo(Poll)
 
-module.exports = { db, Poll, Option, Vote };
+Option.hasMany(Vote)
+Vote.belongsTo(Option)
+
+module.exports = {
+    Poll,
+    Option,
+    Vote
+}
