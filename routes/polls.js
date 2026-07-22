@@ -22,16 +22,17 @@ router.post("/", async (req, res) => {
         .json({ error: "title and at least 2 options are required" });
     }
 
-    const poll = await Poll.create(
-      {
-        title,
-        description,
-        Options: options.map((text) => ({ text })),
-      },
-      { include: Option }
-    );
+    const poll = await Poll.create({ title, description });
 
-    res.status(201).json(poll);
+    for (const text of options) {
+      await Option.create({ text: text, pollId: poll.id });
+    }
+
+    res.status(201).json({
+      id: poll.id,
+      title: poll.title,
+      description: poll.description,
+    });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -47,13 +48,20 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Poll not found" });
     }
 
-    const result = poll.toJSON();
-    result.Options = result.Options.map(({ Votes, ...option }) => ({
-      ...option,
-      voteCount: Votes.length,
-    }));
+    const options = poll.Options.map((option) => {
+      return {
+        id: option.id,
+        text: option.text,
+        voteCount: option.Votes.length,
+      };
+    });
 
-    res.json(result);
+    res.json({
+      id: poll.id,
+      title: poll.title,
+      description: poll.description,
+      options: options,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
