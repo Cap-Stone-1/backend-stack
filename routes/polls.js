@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Poll, Option } = require("../models");
+const { Poll, Option, Vote } = require("../models");
 
 // get all polls
 router.get("/", async (req, res) => {
@@ -17,7 +17,8 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const poll = await Poll.findByPk(req.params.id, {
-      include: Option
+      include: Option,
+      include: Vote
     });
 
     if (!poll) {
