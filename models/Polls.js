@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize")
 const db = require("../db")
 
-const Polls = db.define("Polls", {
+const Poll = db.define("Polls", {
     title: {
         type: DataTypes.STRING,
         allowNull: false
@@ -12,4 +12,4 @@ const Polls = db.define("Polls", {
     }
 })
 
-module.exports = Polls
+module.exports = Poll

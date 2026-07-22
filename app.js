@@ -4,14 +4,19 @@ const app = express();
 //shoukd go before, so it runs on db
 require("dotenv").config();
 const db = require("./db")
-const {Polls, Options, Votes} = require("./models")
+const {Poll, Option, Vote} = require("./models")
 const port = process.env.PORT || 4000;
 const pollRouter = require("./routes/polls")
+const voteRouter = require("./routes/votes")
 
 // app.use(cors())
-app.use(express.json())
 
+
+app.use(express.json())
 app.use("/routes/polls", pollRouter);
+app.use("/routes/votes", voteRouter);
+
+
 
 app.get('/', (req, res) => {
   res.send("main");

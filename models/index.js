@@ -1,17 +1,17 @@
 //associations
 
-const Polls = require('./Polls')
-const Options = require('./Options')
-const Votes = require('./Votes')
+const Poll = require('./Polls')
+const Option = require('./Options')
+const Vote = require('./Votes')
 
-Polls.hasMany(Options)
-Options.belongsTo(Polls)
+Poll.hasMany(Option)
+Option.belongsTo(Poll)
 
-Options.hasMany(Votes)
-Votes.belongsTo(Options)
+Option.hasMany(Vote)
+Vote.belongsTo(Option)
 
 module.exports = {
-    Polls,
-    Options,
-    Votes
+    Poll,
+    Option,
+    Vote
 }

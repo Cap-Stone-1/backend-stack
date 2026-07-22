@@ -1,16 +1,35 @@
-const express = require("express")
-const router = express.Router()
-const {Options, Votes} = require("../models")
+const express = require("express");
+const router = express.Router();
+const { Vote, Option } = require("../models");
 
 
-router.get("/:optionId", async (req, res) => {
-    const votes = await Votes.findAll({
-        where: {
-            optionId: req.params.optionId
-        }
-    })
-    res.json(votes)
+// Create a vote
+router.post("/", async (req, res) => {
+  try {
+    const { optionId } = req.body;
 
-})
+    // Check option exists
+    const option = await Option.findByPk(optionId);
 
-module.exports = router
+    if (!option) {
+      return res.status(404).json({
+        error: "Option not found"
+      });
+    }
+
+    // Create vote
+    const vote = await Vote.create({
+      optionId
+    });
+
+    res.status(201).json(vote);
+
+  } catch (err) {
+    res.status(400).json({
+      error: "Could not create vote"
+    });
+  }
+});
+
+
+module.exports = router;

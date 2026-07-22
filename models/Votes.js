@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize")
 const db = require("../db")
 
-const Votes = db.define("Votes", {
+const Vote = db.define("Votes", {
 
 })
 
-module.exports = Votes
+module.exports = Vote
