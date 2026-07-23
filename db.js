@@ -1,21 +1,15 @@
-const { Sequelize } = require("sequelize")
+const { Sequelize } = require("sequelize");
 
-// database instance
-const db = new Sequelize(process.env.DATABASE_URL, {
-    dialect: "postgres",
-    dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
-})
+const db = new Sequelize("postgres://localhost:5432/polls");
 
 console.log("whatsup")
-module.exports = db
 
-db.authenticate().then(() => {
-    console.log("Connected")
-}).catch((error) => {
-    console.log("not connected")
-})
+db.authenticate()
+  .then(() => {
+    console.log("Connected");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+  
+module.exports = db;

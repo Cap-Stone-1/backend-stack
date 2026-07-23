@@ -1,6 +1,6 @@
 const express = require("express");
-const router = express.Router();
 const { Poll, Option, Vote } = require("../models");
+const router = express.Router();
 
 // get all polls
 router.get("/", async (req, res) => {
@@ -8,32 +8,15 @@ router.get("/", async (req, res) => {
     const polls = await Poll.findAll();
     res.json(polls);
   } catch (err) {
-    res.status(500).json({ error: "No polls"});
+    res.status(500).json({ error: err.message });
   }
 });
 
 
-// Get one poll with its options
-router.get("/:id", async (req, res) => {
-  try {
-    const poll = await Poll.findByPk(req.params.id, {
-      include: Option,
-      include: Vote
-    });
-
-    if (!poll) {
-      return res.status(404).json({
-        error: "Poll not found"
-      });
-    }
-    res.json(poll);
-  } catch (err) {
-    res.status(500).json({ error: "No polls" });
-  }
-})
-
-
-
+// create one poll
+// -
+// -
+// -
 router.post("/", async (req, res) => {
   try {
     const { title, description, options } = req.body;
@@ -55,6 +38,67 @@ router.post("/", async (req, res) => {
       title: poll.title,
       description: poll.description,
     });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+
+
+
+// get poll by id
+// -
+// -
+// -
+router.get("/:id", async (req, res) => {
+  try {
+    const poll = await Poll.findByPk(req.params.id, {
+      include: { model: Option, include: Vote },
+    });
+
+    if (!poll) {
+      return res.status(404).json({ error: "Poll not found" });
+    }
+
+    const options = poll.Options.map((option) => {
+      return {
+        id: option.id,
+        text: option.text,
+        voteCount: option.Votes.length,
+      };
+    });
+    res.json({
+      id: poll.id,
+      title: poll.title,
+      description: poll.description,
+      options: options,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+
+
+router.post("/:id/vote", async (req, res) => {
+  try {
+    const { optionId } = req.body;
+
+    const option = await Option.findOne({
+      where: { id: optionId, pollId: req.params.id },
+    });
+
+    if (!option) {
+      return res
+        .status(404)
+        .json({ error: "Option not found for this poll" });
+    }
+
+    const vote = await Vote.create({ optionId: option.id });
+    res.status(201).json(vote);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
