@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const db = require("../db");
+const db = require("./db");
 
 // Sequelize automatically adds id, createdAt, and updatedAt to every model below,
 // so we only declare the columns that are actually specific to a Poll.
